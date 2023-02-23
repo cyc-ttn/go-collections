@@ -43,6 +43,17 @@ func Map[T any, S any](source []S, fn func(agg []T, s S) (T, bool)) []T {
 	return m
 }
 
+// Filter returns a new slice including only items where the provided filter function returns true.
+func Filter[S any](source []S, fn func(S) bool) []S {
+	filtered := make([]S, 0, len(source))
+	for _, s := range source {
+		if fn(s) {
+			filtered = append(filtered, s)
+		}
+	}
+	return filtered
+}
+
 // MapUnique is the same as Map but checks first if the converted item is unique. Note that by using MapUnique, there
 // is no way to filter (the defined filter is the 'Unique' function. Unique is implemented by using the Contains
 // function.
