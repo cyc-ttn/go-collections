@@ -44,10 +44,10 @@ func Map[T any, S any](source []S, fn func(agg []T, s S) (T, bool)) []T {
 }
 
 // Filter returns a new slice including only items where the provided filter function returns true.
-func Filter[S any](source []S, fn func(S) bool) []S {
+func Filter[S any](source []S, fn func(agg []S, s S) bool) []S {
 	filtered := make([]S, 0, len(source))
 	for _, s := range source {
-		if fn(s) {
+		if fn(filtered, s) {
 			filtered = append(filtered, s)
 		}
 	}
