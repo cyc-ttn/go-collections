@@ -54,13 +54,22 @@ func Filter[S any](source []S, fn func(agg []S, s S) bool) []S {
 	return filtered
 }
 
+// Unique returns a new slice with only unique items.
+func Unique[T comparable](source []T) []T {
+	return MapUnique(source, func(s T) T { return s })
+}
+
 // MapUnique is the same as Map but checks first if the converted item is unique. Note that by using MapUnique, there
 // is no way to filter (the defined filter is the 'Unique' function. Unique is implemented by using the Contains
 // function.
 func MapUnique[T comparable, S any](source []S, fn func(s S) T) []T {
+	m := make(map[T]struct{})
 	return Map(source, func(agg []T, s S) (T, bool) {
 		converted := fn(s)
-		contains := Contains(converted, agg)
-		return converted, !contains
+		if _, exists := m[converted]; exists {
+			return converted, false
+		}
+		m[converted] = struct{}{}
+		return converted, true
 	})
 }
