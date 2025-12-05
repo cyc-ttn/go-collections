@@ -54,9 +54,21 @@ func Filter[S any](source []S, fn func(agg []S, s S) bool) []S {
 	return filtered
 }
 
-// Unique returns a new slice with only unique items.
+// Unique returns a new slice with only unique items. If the number of unique
+// items in the list is small, UniqueFilter is more performant. Otherwise,
+// UniqueInline is faster (technically UniqueInPlace is faster, but for some
+// cases we need the source value untouched).
+//
+// The calculation below assumes that half the items in the list are unique. In
+// that case, UniqueFilter is faster for source lengths smaller than 200.
+//
+// Prefer using UniqueInPlace for sizes greater than 200 and where the original
+// value is not needed. 
 func Unique[T comparable](source []T) []T {
-	return MapUnique(source, func(s T) T { return s })
+	if len(source) < 200 {
+		return UniqueFilter(source)
+	}
+	return UniqueInline(source)
 }
 
 // MapUnique is the same as Map but checks first if the converted item is unique. Note that by using MapUnique, there
