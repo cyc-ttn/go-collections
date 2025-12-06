@@ -63,7 +63,7 @@ func Filter[S any](source []S, fn func(agg []S, s S) bool) []S {
 // that case, UniqueFilter is faster for source lengths smaller than 200.
 //
 // Prefer using UniqueInPlace for sizes greater than 200 and where the original
-// value is not needed. 
+// value is not needed.
 func Unique[T comparable](source []T) []T {
 	if len(source) < 200 {
 		return UniqueFilter(source)
